@@ -87,7 +87,7 @@ def onedata(id):
         lastName = body['lastName']
         emailId = body['emailId']
 
-        db['users'].update_one(
+        mongo.db.appuntamenti.update_one(
             {'_id': ObjectId(id)},
             {
                 "$set": {
