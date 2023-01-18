@@ -8,5 +8,5 @@ export class User {
     subject: string;
     title: string;
     type: string;
-   /* active: boolean;*/
+   active: boolean;
 }

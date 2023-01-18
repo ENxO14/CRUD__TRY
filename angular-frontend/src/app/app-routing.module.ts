@@ -1,4 +1,3 @@
-import { UserDetailsComponent } from './user-details/user-details.component';
 import { CreateUserComponent } from './create-user/create-user.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -10,7 +9,6 @@ const routes: Routes = [
   { path: 'users', component: UserListComponent },
   { path: 'add', component: CreateUserComponent },
   { path: 'update/:_id', component: UpdateUserComponent },
-  { path: 'details/:_id', component: UserDetailsComponent },
 ];
 
 @NgModule({

@@ -29,19 +29,16 @@ export class UserListComponent implements OnInit {
   }
 
 
-deleteUser(_id: string) {
-  this.userService.deleteUser(_id)
-    .subscribe(
-      data => {
-        console.log(data);
-        this.reloadData();
-      },
-      error => console.log(error));
-}
-updateUser(id: string){
-  this.router.navigate(['update', id]);
-}
-userDetails(_id: string){
-  this.router.navigate(['details', _id]);
-}
+  deleteUser(id: string) {
+    this.userService.deleteUser(id)
+      .subscribe(
+        data => {
+          console.log(data);
+          this.reloadData();
+        },
+        error => console.log(error));
+  }
+  updateUser(id: string) {
+    this.router.navigate(['update', id]);
+  }
 }

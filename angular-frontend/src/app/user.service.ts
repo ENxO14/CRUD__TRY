@@ -7,27 +7,27 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  private baseUrl = 'https://5000-enxo14-crudtry-vbx1ch6h3gv.ws-eu83.gitpod.io';
+  private baseUrl = 'https://5000-enxo14-crudtry-vbx1ch6h3gv.ws-eu83.gitpod.io/users';
 
   constructor(private http: HttpClient) { }
 
-  getUser(_id: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${_id}`);
+  getUser(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${id}`);
   }
 
   createUser(user: Object): Observable<Object> {
     return this.http.post(`${this.baseUrl}`, user);
   }
 
-  updateUser(_id: string, value: any): Observable<Object> {
-    return this.http.put(`${this.baseUrl}/${_id}`, value);
+  updateUser(id: string, value: any): Observable<Object> {
+    return this.http.put(`${this.baseUrl}/${id}`, value);
   }
 
-  deleteUser(_id: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${_id}`, { responseType: 'text' });
+  deleteUser(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`, { responseType: 'text' });
   }
 
   getUsersList(): Observable<any> {
-    return this.http.get("https://5000-enxo14-crudtry-vbx1ch6h3gv.ws-eu83.gitpod.io/exams");
+    return this.http.get(`${this.baseUrl}`);
   }
 }

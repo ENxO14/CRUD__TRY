@@ -10,7 +10,7 @@ import { UserService } from '../user.service';
 })
 export class UpdateUserComponent implements OnInit {
 
-  _id: string;
+  id: string;
   user: User;
 
   constructor(private route: ActivatedRoute,private router: Router,
@@ -19,16 +19,16 @@ export class UpdateUserComponent implements OnInit {
   ngOnInit() {
     this.user = new User();
 
-    this._id = this.route.snapshot.params['_id'];
+    this.id = this.route.snapshot.params['id'];
     
-    this.userService.getUser(this._id)
+    this.userService.getUser(this.id)
       .subscribe(data => {
         this.user = data;
       }, error => console.log(error));
   }
 
   updateUser() {
-    this.userService.updateUser(this._id, this.user)
+    this.userService.updateUser(this.id, this.user)
       .subscribe(data => {
         console.log(data);
         this.user = new User();
