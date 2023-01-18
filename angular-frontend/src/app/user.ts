@@ -1,5 +1,5 @@
 export class User {
-    id = 0;
+    id: string;
     class: string;
     course: string;
     difficulty: string;
@@ -8,5 +8,5 @@ export class User {
     subject: string;
     title: string;
     type: string;
-   active: boolean;
+    active: boolean;
 }
