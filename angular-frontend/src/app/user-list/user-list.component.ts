@@ -1,4 +1,3 @@
-import { UserDetailsComponent } from '../user-details/user-details.component';
 import { Observable } from "rxjs";
 import { UserService } from "../user.service";
 import { User } from "../user";
@@ -11,32 +10,38 @@ import { Router } from '@angular/router';
   styleUrls: ["./user-list.component.css"]
 })
 export class UserListComponent implements OnInit {
-  users: Observable<User[]>;
+  data: User[] = undefined!;
+  obsRooms: Observable<User[]> | undefined
 
-  constructor(private userService: UserService,
-    private router: Router) {}
+
+  constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit() {
     this.reloadData();
   }
 
   reloadData() {
-    this.users = this.userService.getUsersList();
+    this.obsRooms = this.userService.getUsersList()
+    this.obsRooms.subscribe(this.fati)
+  }
+  fati = (data: User[]) => {
+    this.data = data;
   }
 
-  deleteUser(_id: string) {
-    this.userService.deleteUser(_id)
-      .subscribe(
-        data => {
-          console.log(data);
-          this.reloadData();
-        },
-        error => console.log(error));
-  }
-  updateUser(id: string){
-    this.router.navigate(['update', id]);
-  }
-  userDetails(_id: string){
-    this.router.navigate(['details', _id]);
-  }
+
+deleteUser(_id: string) {
+  this.userService.deleteUser(_id)
+    .subscribe(
+      data => {
+        console.log(data);
+        this.reloadData();
+      },
+      error => console.log(error));
+}
+updateUser(id: string){
+  this.router.navigate(['update', id]);
+}
+userDetails(_id: string){
+  this.router.navigate(['details', _id]);
+}
 }

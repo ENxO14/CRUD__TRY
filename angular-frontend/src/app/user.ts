@@ -1,8 +1,12 @@
 export class User {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    emailId: string;
-    active: boolean;
-
+    id = 0;
+    class: string;
+    course: string;
+    difficulty: string;
+    duration= 0;
+    link: string;
+    subject: string;
+    title: string;
+    type: string;
+   /* active: boolean;*/
 }

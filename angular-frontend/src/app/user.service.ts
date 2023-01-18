@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  private baseUrl = 'https://5000-liveras-ttttrrrryyyy-q83iphvmcz5.ws-eu44.gitpod.io/users';
+  private baseUrl = 'https://5000-enxo14-crudtry-vbx1ch6h3gv.ws-eu83.gitpod.io';
 
   constructor(private http: HttpClient) { }
 
@@ -28,6 +28,6 @@ export class UserService {
   }
 
   getUsersList(): Observable<any> {
-    return this.http.get(`${this.baseUrl}`);
+    return this.http.get("https://5000-enxo14-crudtry-vbx1ch6h3gv.ws-eu83.gitpod.io/exams");
   }
 }

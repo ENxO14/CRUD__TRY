@@ -1,105 +1,194 @@
-from flask import Flask, render_template, request, jsonify
-from flask_pymongo import PyMongo
-from bson.objectid import ObjectId
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash,  render_template, Response
+from flask_mysqldb import MySQL
+import MySQLdb.cursors
+import re
+from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
+import pymssql
+import pandas as pd
+from bson import json_util
+import json
 
+import psycopg2 #pip install psycopg2 
+import psycopg2.extras
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = 'mongodb://Livera2003:Waduge78&@cluster0-shard-00-00.uylmr.mongodb.net:27017,cluster0-shard-00-01.uylmr.mongodb.net:27017,cluster0-shard-00-02.uylmr.mongodb.net:27017/Livera1?ssl=true&replicaSet=atlas-38dmxu-shard-0&authSource=admin&retryWrites=true&w=majority'
-# db = client.lin_flask
-mongo = PyMongo(app)
+
+app.secret_key = 'xyzsdfg'
+
+def connection():
+    conn = pymssql.connect(server='213.140.22.237\SQLEXPRESS',
+                           user='livera.sasmitha', password='xxx123##', database='livera.samsmitha')
+    return conn
+
+
+mysql = MySQL(app)
 CORS(app)
 
 @app.route('/')
 def index():
     return "Ciao"
 
+@app.route('/exams')
+def exams():
+    # Create a connection
+    conn = connection()
+    # Create a cursor
+    cur = conn.cursor(as_dict=True)
+    # Execute the SQL SELECT statement
+    cur.execute("SELECT * FROM verificaTec")
+    # Fetch all rows from the SELECT statement
+    list_users = cur.fetchall()
+    # Render the index.html template and pass the list of students
+    #return render_template('hehe.html', list_users = list_users)
+
+    return jsonify (list_users)
+    resp = jsonify(list_users)
+    #return json.dumps(list_users)
+    resp = json_util.dumps(list_users)
+    return Response(resp, mimetype = 'application/json') 
+
+@app.route('/teachers')
+def teachers():
+    # Create a connection
+    conn = connection()
+    # Create a cursor
+    cur = conn.cursor(as_dict=True)
+    # Execute the SQL SELECT statement
+    cur.execute("SELECT * FROM docente")
+    # Fetch all rows from the SELECT statement
+    list_users = cur.fetchall()
+    # Render the index.html template and pass the list of students
+    #return render_template('hehe.html', list_users = list_users)
+
+    return jsonify (list_users)
+    resp = jsonify(list_users)
+    #return json.dumps(list_users)
+    resp = json_util.dumps(list_users)
+    return Response(resp, mimetype = 'application/json')
+
+
 @app.route('/users', methods=['POST', 'GET'])
 def data():
-    
+    conn = connection()
+    # Create a cursor
+    cur = conn.cursor(as_dict=True)
+
     # POST a data to database
     if request.method == 'POST':
         body = request.json
-        firstName = body['firstName']
-        lastName = body['lastName']
-        emailId = body['emailId'] 
-        # db.users.insert_one({
-        mongo.db.appuntamenti.insert_one({
-            "firstName": firstName,
-            "lastName": lastName,
-            "emailId":emailId
-        })
+        title = body['title']
+        course = body['course']
+        tipo = body['tipo']
+        difficulty = body['difficulty']
+        duration = body['duration']
+        classe = body['classe']
+        subject = body['subject']
+        
+        cur.execute("INSERT INTO verificaTec (title,course,tipo,difficulty,duration, classe,subject) VALUES (%s,%s,%s,%s,%s,%s,%s)", (title, course,tipo,difficulty,duration,classe,subject))
+        conn.commit()
         return jsonify({
-            'status': 'Data is posted to MongoDB!',
-            'firstName': firstName,
-            'lastName': lastName,
-            'emailId':emailId
+            'status': 'Data is posted to SQLite!',
+            'title': title,
+            'course': dourse,
+            'tipo':tipo,
+            'difficulty':difficulty,
+            'duration':duration,
+            'classe':classe,
+            'subject':subject
         })
-    
+
     # GET all data from database
     if request.method == 'GET':
-        allData =  mongo.db.appuntamenti.find()
+        conn = connection()
+        # Create a cursor
+        cur = conn.cursor(as_dict=True)
+        cur.execute("SELECT * FROM verificaTec")
+        data = cur.fetchall()
         dataJson = []
-        for data in allData:
-            id = data['_id']
-            firstName = data['firstName']
-            lastName = data['lastName']
-            emailId = data['emailId']
+        for doc in data:
+            id = doc[0]
+            title = doc[1]
+            course = doc[2]
+            tipo = doc[3]
+            difficulty = doc[4]
+            duration = doc[5]
+            classe = doc[6]
+            subject = doc[7]
             dataDict = {
-                'id': str(id),
-                'firstName': firstName,
-                'lastName': lastName,
-                'emailId': emailId
+                'id': id,
+                'title': title,
+                'course': course,
+                'tipo': tipo,
+                'difficulty': difficulty,
+                'duration': duration,
+                'classe': classe,
+                'subject': subject
             }
             dataJson.append(dataDict)
-        print(dataJson)
         return jsonify(dataJson)
 
-@app.route('/users/<string:id>', methods=['GET', 'DELETE', 'PUT'])
+@app.route('/users/<int:id>', methods=['GET', 'DELETE', 'PUT'])
 def onedata(id):
 
     # GET a specific data by id
     if request.method == 'GET':
-        data = mongo.db.appuntamenti.find_one({'_id': ObjectId(id)})
-        id = data['_id']
-        firstName = data['firstName']
-        lastName = data['lastName']
-        emailId = data['emailId']
+        conn = connection()
+        # Create a cursor
+        cur = conn.cursor(as_dict=True)
+        cur.execute("SELECT * FROM verificaTec WHERE id = ?", (id,))
+        ver = cur.fetchone()
         dataDict = {
-            'id': str(id),
-            'firstName': firstName,
-            'lastName': lastName,
-            'emailId':emailId
+            'id': ver[0],
+            'title': ver[1],
+            'course': ver[2],
+            'tipo': ver[3],
+            'difficulty': ver[4],
+            'duration': ver[5],
+            'classe': ver[6],
+            'Subject': ver[7]
         }
-        print(dataDict)
         return jsonify(dataDict)
-        
+
     # DELETE a data
     if request.method == 'DELETE':
-        mongo.db.appuntamenti.delete_many({'_id': ObjectId(id)})
-        print('\n # Deletion successful # \n')
-        return jsonify({'status': 'Data id: ' + id + ' is deleted!'})
+        conn = connection()
+        # Create a cursor
+        cur = conn.cursor(as_dict=True)
+        cur.execute('DELETE * FROM verificaTec WHERE id = %s', (id))
+        data = cur.fetchall()
+        cur.close()
+        conn.commit()
+        return jsonify({'status': 'Data id: ' + str(id) + ' is deleted!'})
 
     # UPDATE a data by id
     if request.method == 'PUT':
         body = request.json
-        firstName = body['firstName']
-        lastName = body['lastName']
-        emailId = body['emailId']
+        title = body['title']
+        course = body['course']
+        tipo = body['tipo']
+        difficulty = body['difficulty']
+        duration = body['duration']
+        classe = body['classe']
+        subject = body['subject']
 
-        mongo.db.appuntamenti.update_one(
-            {'_id': ObjectId(id)},
-            {
-                "$set": {
-                    "firstName":firstName,
-                    "lastName":lastName,
-                    "emailId": emailId
-                }
-            }
-        )
+        conn = connection()
+        # Create a cursor
+        cur = conn.cursor(as_dict=True)
+        cur.execute("""
+            UPDATE verificaTec
+            SET title = %s,
+                course = %s,
+                tipo = %s,
+                difficulty = %s,
+                duration = %s,
+                classe = %s,
+                subject = %s
+            WHERE id = %s
+        """, (title, course,tipo,difficulty,duration,classe,subject,id))
+        conn.commit()
+        return jsonify({'status': 'Data id: ' + str(id) + ' is updated!'})
 
-        print('\n # Update successful # \n')
-        return jsonify({'status': 'Data id: ' + id + ' is updated!'})
 
 if __name__ == '__main__':
     app.debug = True
