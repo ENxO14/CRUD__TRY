@@ -13,21 +13,21 @@ export class UpdateUserComponent implements OnInit {
   id: string;
   user: User;
 
-  constructor(private route: ActivatedRoute,private router: Router,
-    private userService: UserService) { }
+  constructor(private route: ActivatedRoute,private router: Router, private userService: UserService) { }
 
   ngOnInit() {
     this.user = new User();
-
     this.id = this.route.snapshot.params['id'];
-    
+    console.log("id: "+this.id)
     this.userService.getUser(this.id)
       .subscribe(data => {
         this.user = data;
       }, error => console.log(error));
+      console.log(this.userService);
   }
 
   updateUser() {
+    console.log("updateUser", this.id);
     this.userService.updateUser(this.id, this.user)
       .subscribe(data => {
         console.log(data);
@@ -36,11 +36,15 @@ export class UpdateUserComponent implements OnInit {
       }, error => console.log(error));
   }
 
+  
+
   onSubmit() {
-    this.updateUser();    
+    console.log("onSubmit")
+    this.updateUser();     
   }
 
   gotoList() {
+    console.log("gotoList")
     this.router.navigate(['/users']);
   }
 }

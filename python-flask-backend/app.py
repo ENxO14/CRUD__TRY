@@ -136,7 +136,7 @@ def onedata(id):
         conn = connection()
         # Create a cursor
         cur = conn.cursor(as_dict=True)
-        cur.execute('SELECT * FROM verificaTec WHERE id = %s', (id))
+        cur.execute("SELECT * FROM verificaTec WHERE id = %s", (id, ))
         ver = cur.fetchone()
         dataDict = {
             'id': ver['id'],
@@ -148,18 +148,26 @@ def onedata(id):
             'classe': ver['classe'],
             'subject': ver['subject']
         }
+        cur.close()
+        conn.close()
         return jsonify(dataDict)
+        
 
     # DELETE a data
     if request.method == 'DELETE':
         conn = connection()
-        # Create a cursor
-        cur = conn.cursor(as_dict=True)
-        cur.execute('DELETE * FROM verificaTec WHERE id = %s', (id))
-        data = cur.fetchall()
-        cur.close()
-        conn.commit()
-        return jsonify({'status': 'Data id: ' + str(id) + ' is deleted!'})
+        cur = conn.cursor()
+
+        cur.execute('SELECT * FROM verificaTec WHERE id = %s', (id,))
+        ver = cur.fetchone()
+        if ver:
+            cur.execute('DELETE FROM verificaTec WHERE id = %s', (id,))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return jsonify({'status': 'Data id: ' + str(id) + ' is deleted!'})
+        else:
+            return jsonify({"message": "Data not found"}), 404
 
     # UPDATE a data by id
     if request.method == 'PUT':
@@ -173,23 +181,19 @@ def onedata(id):
         subject = body['subject']
 
         conn = connection()
-        # Create a cursor
-        cur = conn.cursor(as_dict=True)
-        cur.execute("""
-            UPDATE verificaTec
-            SET title = %s,
-                course = %s,
-                tipo = %s,
-                difficulty = %s,
-                duration = %s,
-                classe = %s,
-                subject = %s
-            WHERE id = %s
-        """, (title, course,tipo,difficulty,duration,classe,subject,id))
-        conn.commit()
-        return jsonify({'status': 'Data id: ' + str(id) + ' is updated!'})
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM verificaTec WHERE id = %s", (id,))
+        ver = cur.fetchone()
+        if ver:
+            cur.execute("UPDATE verificaTec SET title = %s, course = %s, tipo = %s, difficulty = %s, duration = %s, classe = %s, subject = %s WHERE id = %s", (title, course, tipo, difficulty, duration, classe, subject, id))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return jsonify({'status': 'Data id: ' + str(id) + ' is updated!'})
+        else:
+            return jsonify({"message": "Data not found"}), 404
+
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    app.run(debug=True)

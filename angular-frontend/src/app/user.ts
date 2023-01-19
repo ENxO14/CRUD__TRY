@@ -1,12 +1,12 @@
 export class User {
     id:number;
-    class: string;
+    classe: string;
     course: string;
     difficulty: string;
-    duration= 0;
+    duration: number;
     link: string;
     subject: string;
     title: string;
-    type: string;
+    tipo: string;
     active: boolean;
 }
