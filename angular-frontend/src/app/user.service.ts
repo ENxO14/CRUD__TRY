@@ -28,6 +28,7 @@ export class UserService {
   }
 
   getUsersList(): Observable<any> {
-    return this.http.get(`${this.baseUrl}`);
+    /*return this.http.get(`${this.baseUrl}`);*/
+    return this.http.get("https://5000-enxo14-crudtry-vbx1ch6h3gv.ws-eu83.gitpod.io/users");
   }
 }

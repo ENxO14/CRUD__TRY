@@ -73,7 +73,6 @@ def data():
     conn = connection()
     # Create a cursor
     cur = conn.cursor(as_dict=True)
-
     # POST a data to database
     if request.method == 'POST':
         body = request.json
@@ -90,7 +89,7 @@ def data():
         return jsonify({
             'status': 'Data is posted to SQLite!',
             'title': title,
-            'course': dourse,
+            'course': course,
             'tipo':tipo,
             'difficulty':difficulty,
             'duration':duration,
@@ -106,17 +105,18 @@ def data():
         cur.execute("SELECT * FROM verificaTec")
         data = cur.fetchall()
         dataJson = []
+        print(data)
         for doc in data:
-            id = doc[0]
-            title = doc[1]
-            course = doc[2]
-            tipo = doc[3]
-            difficulty = doc[4]
-            duration = doc[5]
-            classe = doc[6]
-            subject = doc[7]
+            id = doc['id']
+            title = doc['title']
+            course = doc['course']
+            tipo = doc['tipo']
+            difficulty = doc['difficulty']
+            duration = doc['duration']
+            classe = doc['classe']
+            subject = doc['subject']
             dataDict = {
-                'id': id,
+                'id' :id,
                 'title': title,
                 'course': course,
                 'tipo': tipo,
@@ -136,17 +136,17 @@ def onedata(id):
         conn = connection()
         # Create a cursor
         cur = conn.cursor(as_dict=True)
-        cur.execute("SELECT * FROM verificaTec WHERE id = ?", (id,))
+        cur.execute('SELECT * FROM verificaTec WHERE id = %s', (id))
         ver = cur.fetchone()
         dataDict = {
-            'id': ver[0],
-            'title': ver[1],
-            'course': ver[2],
-            'tipo': ver[3],
-            'difficulty': ver[4],
-            'duration': ver[5],
-            'classe': ver[6],
-            'Subject': ver[7]
+            'id': ver['id'],
+            'title': ver['title'],
+            'course': ver['course'],
+            'tipo': ver['tipo'],
+            'difficulty': ver['difficulty'],
+            'duration': ver['duration'],
+            'classe': ver['classe'],
+            'subject': ver['subject']
         }
         return jsonify(dataDict)
 

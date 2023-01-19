@@ -1,5 +1,5 @@
 export class User {
-    id: string;
+    id:number;
     class: string;
     course: string;
     difficulty: string;
